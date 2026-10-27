@@ -23,7 +23,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from matplotlib.colors import LinearSegmentedColormap, Normalize  # noqa: E402
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent  # 저장소 루트 (data/, .env)
 
 INVESTORS = ["외국인", "기관", "개인"]
 MARKETS = ["KOSPI", "KOSDAQ"]

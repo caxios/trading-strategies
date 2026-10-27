@@ -46,7 +46,7 @@ from investor_flow_decile_backtest import (INVESTORS, MARKETS, TESTED, assign_gr
                                            build_universe, forward_returns, nonoverlap_t)
 from netsell_reversal_backtest import load, nw_tstat
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent  # 저장소 루트 (data/, .env)
 OUT = ROOT / "data"
 COST = 0.0025
 BONF_Z_GROUP = NormalDist().inv_cdf(1 - 0.05 / 150 / 2)  # ≈ 3.59

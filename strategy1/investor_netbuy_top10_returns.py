@@ -21,7 +21,7 @@ from pathlib import Path
 import pandas as pd
 from dotenv import load_dotenv
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent  # 저장소 루트 (data/, .env)
 load_dotenv(ROOT / ".env")
 
 INVESTORS = ["개인", "기관", "외국인"]

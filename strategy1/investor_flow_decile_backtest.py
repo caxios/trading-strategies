@@ -35,7 +35,7 @@ import pandas as pd
 
 from netsell_reversal_backtest import load, nw_tstat
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent  # 저장소 루트 (data/, .env)
 INVESTORS = ["외국인", "기관", "개인"]
 MARKETS = ["KOSPI", "KOSDAQ"]
 HORIZONS = [1, 5, 10, 20, 60, 120, 240, 480]  # 480 영업일 ≈ 2년

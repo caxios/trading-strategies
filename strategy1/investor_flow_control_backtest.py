@@ -40,7 +40,7 @@ from investor_flow_decile_backtest import (HORIZONS, INVESTORS, TESTED, assign_g
                                            build_universe, forward_returns, nonoverlap_t)
 from netsell_reversal_backtest import load, nw_tstat
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent  # 저장소 루트 (data/, .env)
 TWO_SIDED_Z = 1.96
 TAIL = 0.3  # 셀 안 하위/상위 30%
 

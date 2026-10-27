@@ -28,7 +28,7 @@ import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent  # 저장소 루트 (data/, .env)
 load_dotenv(ROOT / ".env")
 
 from pykrx import stock  # noqa: E402  (.env 로드 후 import 해야 자동 로그인됨)

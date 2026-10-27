@@ -37,7 +37,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent  # 저장소 루트 (data/, .env)
 HIST = ROOT / "data" / "history"
 INVESTORS = ["외국인", "기관", "개인"]
 HORIZONS = [1, 5, 10, 20, 60, 120, 240, 480]  # 480 영업일 ≈ 2년
