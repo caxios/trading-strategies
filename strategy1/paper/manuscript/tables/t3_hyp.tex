@@ -1,0 +1,21 @@
+\begin{table}[htbp]\centering
+\caption{Pre-specified hypothesis tests: tail risk}\label{tab:hyp}
+\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{llrrlll}\toprule
+ & Hypothesis & Estimate (pp) & $t$ & $p$ & Decision rule & Result \\\midrule
+H1 & Foreign extreme selling raises tail risk ($\beta^F_S>0$) & 0.98 & 6.30 & $<$0.0001 & Holm, 0.0167 & Supported \\
+H2 & Foreign selling riskier than buying ($\beta^F_S-\beta^F_B>0$) & 0.72 & 4.04 & $<$0.0001 & Holm, 0.0500 & Supported \\
+H4 & Individual buying riskier than selling ($\beta^R_B-\beta^R_S>0$) & 0.97 & 4.14 & $<$0.0001 & Holm, 0.0250 & Supported \\
+H3 & Institutional equivalence ($|\beta^I_S-\beta^I_B|<0.5$pp, TOST) & 0.41 & 1.96 & 0.341 & TOST, 5\% & Not established \\
+\midrule
+H5 & Foreign selling coefficient $>0$ & 0.98 & 6.30 & $<$0.0001 & Bonferroni, 0.0042 & Significant \\
+H5 & Foreign buying coefficient $>0$ & 0.26 & 1.49 & 0.0686 & Bonferroni, 0.0042 & Not significant \\
+H5 & Institutional selling coefficient $>0$ & 0.16 & 0.53 & 0.2980 & Bonferroni, 0.0042 & Not significant \\
+H5 & Institutional buying coefficient $>0$ & -0.26 & -1.19 & 0.8826 & Bonferroni, 0.0042 & Not significant \\
+H5 & Individual selling coefficient $>0$ & 0.19 & 1.07 & 0.1420 & Bonferroni, 0.0042 & Not significant \\
+H5 & Individual buying coefficient $>0$ & 1.16 & 6.71 & $<$0.0001 & Bonferroni, 0.0042 & Significant \\
+H6 & Foreign extreme selling, joint model ($\beta^F_S>0$) & 0.40 & 2.98 & 0.0015 & Bonferroni, 0.0042 & Significant \\
+\bottomrule\end{tabular}
+\begin{minipage}{0.95\textwidth}\vspace{0.5em}\scriptsize
+\textit{Notes:} Estimates and Newey--West $t$-statistics come from Table~\ref{tab:tail}. $p$-values are one-sided under the normal approximation. The primary family (H1, H2, H4) is controlled at 5\% with Holm's step-down procedure; the threshold shown is the one applied to each hypothesis. H3 is a two one-sided tests (TOST) equivalence test with margin $\pm0.5$ percentage points; the ordinary two-sided $p$-value for $\beta^I_S-\beta^I_B=0$ is 0.049. Secondary hypotheses use a Bonferroni threshold of $0.05/12$.
+\end{minipage}\end{table}

@@ -1,0 +1,35 @@
+\begin{table}[htbp]\centering
+\caption{Robustness of the tail-risk results}\label{tab:robust}
+\scriptsize
+\begin{tabular}{lcccc}\toprule
+ & Foreign & Foreign & Individual & Institutional \\
+Specification & $\beta_S$ (H1) & $\beta_S-\beta_B$ (H2) & $\beta_S-\beta_B$ (H4) & $\beta_S-\beta_B$ (H3) \\\midrule
+Baseline & 0.98 (6.30) & 0.72 (4.04) & -0.97 (-4.14) & 0.41 (1.96) \\
+\midrule
+R1: Entry at the open of $d+1$ & 1.15 (6.60) & 0.86 (4.82) & -1.12 (-4.97) & 0.49 (2.31) \\
+R1: Entry at the close of $d$ (infeasible, reference) & 1.13 (6.71) & 0.88 (5.44) & -1.08 (-5.39) & 0.62 (3.05) \\
+R2: Signal from 5-day cumulative flow & 0.31 (1.33) & 0.14 (0.54) & -0.73 (-2.48) & 0.28 (0.91) \\
+R2: Signal from 20-day cumulative flow & -0.84 (-3.14) & -0.63 (-1.66) & -0.40 (-1.15) & 0.57 (2.14) \\
+R3: Heavy-trading signal & 1.20 (6.48) & 0.83 (5.18) & -1.04 (-5.35) & 0.41 (2.47) \\
+R3: Extreme 5\% & 1.37 (4.98) & 0.71 (2.75) & -1.09 (-4.08) & 0.37 (1.13) \\
+R3: Extreme 20\% & 0.56 (6.33) & 0.57 (4.74) & -0.86 (-5.94) & 0.33 (2.44) \\
+R4: Threshold $-10\%$ & 2.21 (6.77) & 0.42 (1.54) & -0.10 (-0.22) & -0.52 (-1.02) \\
+R4: Path minimum $\le -20\%$ & 1.55 (5.36) & 0.78 (3.31) & -1.22 (-3.48) & 0.48 (1.19) \\
+R5: 10-day horizon & 0.47 (4.54) & 0.70 (7.04) & -1.02 (-7.15) & 0.49 (3.58) \\
+R5: 60-day horizon$^\dagger$ & 1.70 (2.81) & 0.67 (1.97) & -0.14 (-0.32) & -0.86 (-2.75) \\
+R6: KOSPI only & 0.75 (5.28) & 0.64 (3.01) & -1.04 (-4.47) & 0.85 (2.83) \\
+R6: KOSDAQ only & 1.15 (5.48) & 0.78 (3.20) & -0.93 (-3.05) & 0.11 (0.51) \\
+R7: Largest size tercile & 0.80 (3.73) & 0.55 (2.01) & -0.45 (-1.47) & -0.03 (-0.10) \\
+R7: Market cap $\ge$ KRW 100bn & 0.77 (4.80) & 0.57 (2.88) & -0.79 (-3.46) & 0.34 (1.57) \\
+R8: First year & 0.99 (8.16) & 1.11 (6.60) & -1.54 (-5.81) & 0.54 (2.40) \\
+R8: Second year & 0.97 (3.27) & 0.29 (1.16) & -0.36 (-1.22) & 0.28 (0.77) \\
+R9: Market up over prior 20 days & 0.82 (4.70) & 0.55 (2.44) & -0.62 (-2.44) & 0.25 (1.48) \\
+R9: Market down over prior 20 days & 1.32 (5.67) & 1.08 (3.13) & -1.72 (-4.58) & 0.75 (1.78) \\
+R10: Pooled LPM, day FE, two-way clustered & 1.05 (7.04) & 0.93 (4.60) & -1.12 (-5.00) & 0.37 (1.90) \\
+R10: Logit AME, day FE, two-way clustered$^\ddagger$ & 1.21 (13.91) & 0.37 (3.67) & -0.30 (-2.72) & -0.10 (-0.74) \\
+R11: Missing controls imputed & 1.15 (6.87) & 0.77 (4.40) & -1.05 (-4.51) & 0.44 (2.24) \\
+R12: Book-to-market lagged 60 days & 1.01 (6.41) & 0.72 (4.03) & -0.98 (-4.13) & 0.41 (1.95) \\
+\bottomrule\end{tabular}
+\begin{minipage}{0.95\textwidth}\vspace{0.5em}\scriptsize
+\textit{Notes:} Each row changes one element of the baseline specification of Table~\ref{tab:tail} (all rows were pre-specified). Entries are coefficients in percentage points with $t$-statistics in parentheses. H1 and H2 predict positive values, H4 predicts a negative value (individual buying riskier), and H3 predicts a value near zero. Fama--MacBeth rows use Newey--West standard errors with $\max(h-1,5)$ lags. $^\dagger$Only seven non-overlapping 60-day windows; treated as underpowered. $^\ddagger$Standard errors of average marginal effects are approximated by scaling coefficient standard errors with the mean logistic density and may be too small.
+\end{minipage}\end{table}

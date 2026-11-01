@@ -1,0 +1,23 @@
+\begin{table}[htbp]\centering
+\caption{Within-sample replication: time and cross-sectional splits}\label{tab:split}
+\small
+\textit{Panel A: First year versus second year}\\[3pt]
+\begin{tabular}{lcccc}\toprule
+ & First year & Second year & $z$ (difference) & $p$ (two-sided) \\\midrule
+H1: Foreign $\beta_S$ & 0.99 (8.16) & 0.97 (3.27) & 0.04 & 0.964 \\
+H2: Foreign $\beta_S-\beta_B$ & 1.11 (6.60) & 0.29 (1.16) & 2.69 & 0.007 \\
+H4: Individual $\beta_B-\beta_S$ & 1.54 (5.81) & 0.36 (1.22) & 2.98 & 0.003 \\
+H3: Institutional $\beta_S-\beta_B$ & 0.54 (2.40) & 0.28 (0.77) & 0.62 & 0.532 \\
+\bottomrule\end{tabular}\\[8pt]
+\textit{Panel B: Random halves of stocks, 200 splits}\\[3pt]
+\begin{tabular}{lccccc}\toprule
+ & Same sign in & Significant in & \multicolumn{3}{c}{$t$-statistics (400 halves)} \\
+\cmidrule(lr){4-6}
+ & both halves (\%) & both halves (\%) & Min & Median & Max \\\midrule
+H1: Foreign $\beta_S$ & 100.0 & 100.0 & 3.03 & 5.07 & 9.07 \\
+H2: Foreign $\beta_S-\beta_B$ & 100.0 & 97.5 & 1.20 & 3.20 & 5.28 \\
+H4: Individual $\beta_B-\beta_S$ & 100.0 & 99.5 & 1.64 & 3.47 & 5.92 \\
+\bottomrule\end{tabular}
+\begin{minipage}{0.95\textwidth}\vspace{0.5em}\scriptsize
+\textit{Notes:} Panel A re-estimates the baseline model separately for signal days 22 October 2024 to 22 October 2025 and 23 October 2025 to 17 September 2026 (coefficients in percentage points, signed so that positive values support the hypothesis; Newey--West $t$-statistics in parentheses). $z=(\bar\beta_1-\bar\beta_2)/\sqrt{se_1^2+se_2^2}$ treats the two halves as independent. Panel B splits the cross-section of stocks into two random halves (seeds 0--199) and re-estimates the baseline model in each half; ``significant'' means a one-sided $p<0.05$. Both panels use data from which the hypotheses were derived and are therefore not true out-of-sample tests.
+\end{minipage}\end{table}

@@ -1,0 +1,14 @@
+\begin{table}[htbp]\centering
+\caption{Constructed Korean factors}\label{tab:factors}
+\small
+\begin{tabular}{lccc}\toprule
+Factor & Days & Mean daily return (\%) & Annualized volatility (\%) \\\midrule
+MKT & 485 & 0.161 & 41.1 \\
+SMB & 485 & -0.151 & 18.8 \\
+HML & 485 & -0.026 & 26.5 \\
+MOM & 485 & 0.071 & 25.8 \\
+STR & 485 & -0.003 & 27.3 \\
+\bottomrule\end{tabular}
+\begin{minipage}{0.85\textwidth}\vspace{0.5em}\scriptsize
+\textit{Notes:} Factors are built from the study universe (both markets pooled). MKT is the value-weighted universe return minus the daily CD (91-day) rate; SMB and HML use a $2\times3$ sort on size (median) and book-to-market (30/70), MOM a $2\times3$ sort on 12--1 month returns, both reformed at month-ends; STR is a daily-reformed $2\times3$ sort on the prior 20-day return (losers minus winners). Correlations of daily returns with KRX indices: our KOSPI index 1.0000, our KOSDAQ index 0.9996; SMB with the average of (KOSPI small $-$ large) and (KOSDAQ small $-$ large) size indices 0.66. The lower SMB correlation reflects pooled-median versus within-market rank breakpoints.
+\end{minipage}\end{table}

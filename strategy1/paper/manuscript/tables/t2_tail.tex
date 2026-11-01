@@ -1,0 +1,17 @@
+\begin{table}[htbp]\centering
+\caption{Extreme investor flows and the probability of a large 20-day underperformance}\label{tab:tail}
+\small
+\begin{tabular}{lccccccc}\toprule
+ & \multicolumn{4}{c}{Separate regressions} & \multicolumn{2}{c}{Joint regression} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-7}
+Investor group & $\beta_S$ & $\beta_B$ & $\beta_S-\beta_B$ & Base rate & $\beta_S$ & $\beta_B$ \\\midrule
+Foreign & 0.98 & 0.26 & 0.72 & 3.10 & 0.40 & 0.16 \\
+ & (6.30) & (1.49) & (4.04) & & (2.98) & (1.07) \\[2pt]
+Institutional & 0.16 & -0.26 & 0.41 & 3.64 & -0.09 & -0.34 \\
+ & (0.53) & (-1.19) & (1.96) & & (-0.33) & (-1.66) \\[2pt]
+Individual & 0.19 & 1.16 & -0.97 & 3.09 & 0.18 & 0.93 \\
+ & (1.07) & (6.71) & (-4.14) & & (1.11) & (5.81) \\[2pt]
+\bottomrule\end{tabular}
+\begin{minipage}{0.95\textwidth}\vspace{0.5em}\scriptsize
+\textit{Notes:} Each day $d$ we estimate the cross-sectional linear probability model $Y_{i,d}=a_d+\beta_S S^j_{i,d}+\beta_B B^j_{i,d}+\delta\,\mathrm{KOSPI}_i+\gamma'Z_{i,d}+\varepsilon_{i,d}$, where $Y_{i,d}=1$ if the stock's market-adjusted return over the 20 trading days after the close of $d+1$ is $-20\%$ or worse, $S^j$ ($B^j$) flags the bottom (top) decile of investor group $j$'s net buying scaled by market capitalization on day $d$ within the stock's market, and $Z$ contains the eleven controls of Table~\ref{tab:summary}. Coefficients are time-series averages of the daily estimates, in percentage points. Newey--West $t$-statistics with 19 lags are in parentheses ($T=466$ days). The base rate is the average daily frequency of $Y=1$ among stocks with neither signal. The joint regression includes all six signals.
+\end{minipage}\end{table}

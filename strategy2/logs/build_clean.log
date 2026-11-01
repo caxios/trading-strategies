@@ -1,0 +1,18 @@
+시세 3141일 (20140102~20261022)
+종목 3369개, 코드 연결 1건, 시장 이전 16건, 정리매매 199종목
+  2014: {'year': '2014', 'rows': 470960, 'codes': 2010, 'halted': 10567, 'ret_from_chg': 224, 'flow_on_halted': 194, 'loan_nan_rows': 45960, 'no_sector': 32}
+  2015: {'year': '2015', 'rows': 490187, 'codes': 2094, 'halted': 9346, 'ret_from_chg': 234, 'flow_on_halted': 108, 'loan_nan_rows': 33861, 'no_sector': 0}
+  2016: {'year': '2016', 'rows': 507498, 'codes': 2129, 'halted': 8565, 'ret_from_chg': 293, 'flow_on_halted': 131, 'loan_nan_rows': 29104, 'no_sector': 0}
+  2017: {'year': '2017', 'rows': 515693, 'codes': 2206, 'halted': 9275, 'ret_from_chg': 320, 'flow_on_halted': 102, 'loan_nan_rows': 28481, 'no_sector': 0}
+  2018: {'year': '2018', 'rows': 530999, 'codes': 2268, 'halted': 9181, 'ret_from_chg': 267, 'flow_on_halted': 115, 'loan_nan_rows': 28574, 'no_sector': 0}
+  2019: {'year': '2019', 'rows': 555287, 'codes': 2341, 'halted': 15683, 'ret_from_chg': 224, 'flow_on_halted': 63, 'loan_nan_rows': 28519, 'no_sector': 0}
+  2020: {'year': '2020', 'rows': 580252, 'codes': 2426, 'halted': 22477, 'ret_from_chg': 260, 'flow_on_halted': 49, 'loan_nan_rows': 29781, 'no_sector': 0}
+  2021: {'year': '2021', 'rows': 603794, 'codes': 2516, 'halted': 24541, 'ret_from_chg': 350, 'flow_on_halted': 3, 'loan_nan_rows': 30164, 'no_sector': 0}
+  2022: {'year': '2022', 'rows': 617757, 'codes': 2603, 'halted': 21036, 'ret_from_chg': 271, 'flow_on_halted': 2, 'loan_nan_rows': 30081, 'no_sector': 0}
+  2023: {'year': '2023', 'rows': 637754, 'codes': 2704, 'halted': 20197, 'ret_from_chg': 269, 'flow_on_halted': 0, 'loan_nan_rows': 29451, 'no_sector': 0}
+  2024: {'year': '2024', 'rows': 657429, 'codes': 2797, 'halted': 24626, 'ret_from_chg': 234, 'flow_on_halted': 5, 'loan_nan_rows': 28383, 'no_sector': 0}
+  2025: {'year': '2025', 'rows': 667913, 'codes': 2863, 'halted': 24693, 'ret_from_chg': 216, 'flow_on_halted': 16, 'loan_nan_rows': 27869, 'no_sector': 0}
+  2026: {'year': '2026', 'rows': 542752, 'codes': 2846, 'halted': 23315, 'ret_from_chg': 456, 'flow_on_halted': 15, 'loan_nan_rows': 22190, 'no_sector': 0}
+일간 |수익률|>50%: 382건 (정리매매 중 267건)
+실적 발표일 124954건 (잠정 22969, 정기 101985)
+저장 위치: data\clean

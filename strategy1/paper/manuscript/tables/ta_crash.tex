@@ -1,0 +1,19 @@
+\begin{table}[htbp]\centering
+\caption{Investor flows and conditional skewness}\label{tab:crash}
+\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lccccccccc}\toprule
+ & \multicolumn{3}{c}{Foreign} & \multicolumn{3}{c}{Institutional} & \multicolumn{3}{c}{Individual} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
+Dependent variable & $\beta_S$ & $\beta_B$ & $\beta_S-\beta_B$ & $\beta_S$ & $\beta_B$ & $\beta_S-\beta_B$ & $\beta_S$ & $\beta_B$ & $\beta_S-\beta_B$ \\\midrule
+NCSKEW, 20 days & 0.005 & 0.002 & 0.003 & -0.006 & -0.018 & 0.012 & 0.012 & 0.010 & 0.001 \\
+ & (0.42) & (0.15) & (0.37) & (-0.39) & (-1.61) & (1.07) & (0.91) & (0.83) & (0.12) \\[2pt]
+DUVOL, 20 days & -0.000 & -0.005 & 0.004 & -0.033 & -0.038 & 0.005 & 0.008 & 0.003 & 0.005 \\
+ & (-0.03) & (-0.33) & (0.44) & (-2.04) & (-3.07) & (0.47) & (0.57) & (0.24) & (0.41) \\[2pt]
+NCSKEW, 60 days$^\dagger$ & 0.029 & 0.012 & 0.017 & 0.051 & 0.027 & 0.024 & 0.006 & 0.032 & -0.026 \\
+ & (1.56) & (0.78) & (2.16) & (4.17) & (1.65) & (1.88) & (0.40) & (1.69) & (-2.63) \\[2pt]
+DUVOL, 60 days$^\dagger$ & 0.008 & -0.003 & 0.010 & -0.011 & -0.016 & 0.006 & -0.003 & 0.007 & -0.010 \\
+ & (0.48) & (-0.19) & (2.25) & (-0.97) & (-1.19) & (0.77) & (-0.23) & (0.48) & (-1.92) \\[2pt]
+\bottomrule\end{tabular}
+\begin{minipage}{0.95\textwidth}\vspace{0.5em}\scriptsize
+\textit{Notes:} Same daily cross-sectional regressions as Table~\ref{tab:tail} with the dependent variable replaced by the negative coefficient of skewness (NCSKEW) or the down-to-up volatility ratio (DUVOL) of firm-specific log returns over the holding window. Firm-specific returns are $\ln(1+r_{i,t}-\hat\beta_{i,d}r_{m,t})$ with $\hat\beta$ estimated before the signal day. Newey--West $t$-statistics in parentheses. $^\dagger$426 signal days; seven non-overlapping windows.
+\end{minipage}\end{table}
