@@ -5,7 +5,8 @@ run_pilot.py(5절 파일럿)와 이후 전체 실행 스크립트가 같이 쓴�
   load_wide()        : 연도별 패널 → 날짜 × 종목 행렬 묶음
   indicators()       : 6절 지표와 4.1·4.3·4.4·6.1절 필터 재료 (행렬, 신호일 이하 자료만 사용)
   cross_sections()   : 신호일마다 필터 적용 → 은밀성 회귀 → 순위 표준화 → 점수 (긴 표)
-  Engine             : 다음 날 시가 진입 · 20거래일 보유 수익률, Jegadeesh–Titman 주간 수익률, 회전율·비용
+  Engine             : 다음 날 시가 진입 · h거래일 보유 종목 수익률, 매도 결제일 세율
+  signal_returns()   : 신호일 × 분위 단위 수익률과 왕복 비용 (7.3·7.4절)
   nw_t(), fama_macbeth() 등 : 8절 검증 통계
 """
 from pathlib import Path
@@ -276,63 +277,29 @@ class Engine:
             return pd.Series(dtype=float)
         return pd.Series(G[-1] - 1, index=self.codes[idx])
 
-    def portfolios(self, cohorts: dict, sig_pos: list[int], lag: int = 1, hs: pd.DataFrame | None = None,
-                   turnover: bool = True) -> dict[str, pd.DataFrame]:
-        """7.3절 Jegadeesh–Titman: 그날 보유 중인 모든 묶음(cohort)의 일간 수익률을 같은 비중으로 평균하고
-        신호일 사이 거래일로 묶어 주간 수익률을 만든다. cohorts = {라벨: {j: 종목코드 목록}}.
-        반환 라벨별 표: week(주 시작 신호일), gross, TO(편도 회전율), hs(새 묶음 평균 반스프레드), tax."""
-        n, h = len(self.days), self.hold
-        sig_pos = sorted(sig_pos)
-        # 첫 묶음이 만기에 닿은 뒤(보유 묶음이 다 찬 뒤)의 주부터, 마지막 신호일이 끝나는 주까지
-        weeks = [(a, b) for a, b in zip(sig_pos[:-1], sig_pos[1:]) if a + 1 >= sig_pos[0] + lag + h - 1]
-        out = {}
-        for label, coh in cohorts.items():
-            s, c = np.zeros(n), np.zeros(n)
-            book = {}
-            for j, codes in coh.items():
-                G, idx = self.paths(j, codes, lag)
-                if G is None or G.shape[1] == 0:
-                    continue
-                e = j + lag
-                V = G.mean(axis=1)
-                r = V / np.concatenate([[1.0], V[:-1]]) - 1
-                s[e:e + h] += r
-                c[e:e + h] += 1
-                book[e] = (idx, G, j)
-            daily = np.where(c > 0, s / np.where(c > 0, c, 1), np.nan)
-            rows = []
-            for a, b in weeks:
-                wk = {"week": self.days[a], "gross": np.prod(1 + daily[a + 1:b + 1]) - 1, "tax": self.tax[a + 1]}
-                if turnover:
-                    wk["TO"], wk["hs"] = self._turnover(book, a + 1, hs)
-                rows.append(wk)
-            out[label] = pd.DataFrame(rows)
-        return out
-
-    def _turnover(self, book: dict, e: int, hs):
-        """e일 시가 리밸런싱 전후 보유 비중 차이의 매수 쪽 합(편도 회전율)과 새 묶음의 평균 반스프레드."""
-        def weights(day):
-            # day 일에 보유 중인 묶음들의 합산 비중. 기존 묶음은 e-1 일 종가 기준, e 일에 새로 든 묶음은 균등
-            w = np.zeros(len(self.codes))
-            act = [(ec, v) for ec, v in book.items() if ec <= day <= ec + self.hold - 1]
-            for ec, (idx, G, _) in act:
-                g = G[e - 1 - ec] if ec < e else np.ones(len(idx))
-                np.add.at(w, idx, g / g.sum() / len(act))
-            return w
-        to = float(np.clip(weights(e) - weights(e - 1), 0, None).sum())
-        sp = np.nan
-        if e in book and hs is not None:
-            idx, _, j = book[e]
-            row = hs.iloc[j]
-            v = row.iloc[idx]
-            sp = float(v.fillna(row.median()).mean())
-        return to, sp
+    def sale_tax(self, j: int, lag: int = 1) -> float:
+        """7.4절 τ_t: 보유 마지막 거래일(j+lag+hold−1)에 판 주식의 결제일 세율."""
+        return float(self.tax[min(j + lag + self.hold - 1, len(self.tax) - 1)])
 
 
-def net_returns(df: pd.DataFrame, fee: float = FEE, slip: float | None = None) -> pd.Series:
-    """7.4절 R_net = R_gross − TO × (2c + τ + 2s). slip 을 주면 Abdi–Ranaldo 대신 고정 반스프레드."""
-    s = df["hs"] if slip is None else slip
-    return df["gross"] - df["TO"] * (2 * fee + df["tax"] + 2 * s)
+def signal_returns(d: pd.DataFrame, key: str, fee: float = FEE, slip: float | None = None) -> pd.DataFrame:
+    """7.3·7.4절: 신호일 × key(분위 등) 단위의 동일 가중 수익률. d 는 종목 행(R, Rex, Rbar, hs, tax 포함).
+    반환 열: R(비용 전), Rex(비용 전 초과), cost(왕복 비용 2c + τ + 2s̄), n(종목 수).
+    slip 을 주면 Abdi–Ranaldo 대신 고정 반스프레드. 진입일 정지로 R 이 없는 종목은 뺀다."""
+    d = d.dropna(subset=["R"])
+    g = d.groupby(["date", key])
+    out = g.agg(R=("R", "mean"), Rex=("Rex", "mean"), hs=("hs", "mean"), tax=("tax", "first"), n=("code", "size"))
+    out["cost"] = 2 * fee + out["tax"] + 2 * (out["hs"] if slip is None else slip)
+    return out
+
+
+def nonoverlap_curve(r: pd.Series, step: int) -> pd.Series:
+    """8.1절 1항 누적 곡선: step 신호일 간격으로 떨어진 신호일만 이어 붙인 누적 가치를, 가능한 시작점 step 개에
+    대해 평균한다(시작점마다 날짜가 달라서 합집합 날짜에서 앞의 값을 이어 쓴 뒤 평균). r 은 신호일 순서."""
+    r = r.dropna().sort_index()
+    curves = [(1 + r.iloc[k::step]).cumprod() for k in range(step)]
+    idx = r.index
+    return pd.concat([c.reindex(idx).ffill().fillna(1.0) for c in curves], axis=1).mean(axis=1)
 
 
 def nw_t(x, lag: int = NW_LAG) -> tuple[float, float, int]:
@@ -350,8 +317,8 @@ def nw_t(x, lag: int = NW_LAG) -> tuple[float, float, int]:
     return m, m / np.sqrt(v / n), n
 
 
-def max_drawdown(r: pd.Series) -> float:
-    v = (1 + r.fillna(0)).cumprod()
+def max_drawdown(v: pd.Series) -> float:
+    """누적 가치 곡선의 최대 낙폭."""
     return float((v / v.cummax() - 1).min())
 
 
