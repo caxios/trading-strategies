@@ -29,8 +29,8 @@ SLIP_FIXED = (0.001, 0.003)           # 7.4절 슬리피지 고정값 민감도
 SPREAD_DAYS = 60                      # Abdi–Ranaldo 추정 창
 EVENT_DAYS = 60                       # 8.4절 (3) 신호일 이후 실적 발표를 찾는 범위
 
-# FOR·INST 가 주 분석, PENS·IVTR 은 2절 비고의 보조 분석(연기금·투신 각각)
-GROUPS = {"FOR": ("FRGN", "OFRGN"), "INST": ("PENS", "IVTR"), "PENS": ("PENS",), "IVTR": ("IVTR",)}
+# FOR·INST 가 주 분석, PENS 는 2절 비고의 보조 분석(연기금 단독). 투신 단독은 생략(assumptions.md 7절)
+GROUPS = {"FOR": ("FRGN", "OFRGN"), "INST": ("PENS", "IVTR"), "PENS": ("PENS",)}
 INVESTORS = ("FRGN", "OFRGN", "PENS", "IVTR")
 PX_FIELDS = ["exists", "halted", "in_liq", "kosdaq", "value", "mktcap", "ret", "close", "adj_open", "adj_close",
              "adj_high", "adj_low", "loan_known", "loan_avail"]
@@ -58,9 +58,9 @@ def list_pos(master: pd.DataFrame, cal: pd.DatetimeIndex) -> pd.Series:
     return pos
 
 
-def load_wide(years: list[int], codes: list[str]) -> tuple[dict[str, pd.DataFrame], pd.DataFrame]:
-    """연도별 패널에서 codes 만 읽어 날짜 × 종목 행렬을 만든다. 행이 없는 날(상장 전·상폐 후)은 NaN.
-    반환: (행렬 묶음, 신호일 업종 조회용 긴 표 date·code·sector)."""
+def load_wide(years: list[int], codes: list[str], sector_dates=None) -> tuple[dict[str, pd.DataFrame], pd.DataFrame]:
+    """연도별 패널에서 codes 만 읽어 날짜 × 종목 행렬(float32, 메모리 절약)을 만든다. 행이 없는 날(상장 전·상폐 후)은 NaN.
+    반환: (행렬 묶음, 업종 조회용 긴 표 date·code·sector). sector_dates 를 주면 그 날짜의 업종만 남긴다."""
     cols = ["date", "code", "market", "high", "low", "close", "value", "mktcap", "halted", "ret", "adj_close",
             "adj_open", *[f"{p}_{s}" for p in INVESTORS for s in ("buy", "sell", "net")],
             "loan_bal_known", "loan_avail", "sector", "in_liquidation"]
@@ -79,7 +79,8 @@ def load_wide(years: list[int], codes: list[str]) -> tuple[dict[str, pd.DataFram
         for g, members in GROUPS.items():
             p[f"{g}_gross"] = sum(p[f"{m}_buy"] + p[f"{m}_sell"] for m in members)
             p[f"{g}_net"] = sum(p[f"{m}_net"] for m in members)
-        sectors.append(p[["date", "code", "sector"]])
+        sec = p[["date", "code", "sector"]]
+        sectors.append(sec if sector_dates is None else sec[sec["date"].isin(sector_dates)])
         for c in PX_FIELDS + [f"{g}_{s}" for g in GROUPS for s in ("gross", "net")]:
             parts.setdefault(c, []).append(p.pivot(index="date", columns="code", values=c))
         del p
@@ -88,7 +89,9 @@ def load_wide(years: list[int], codes: list[str]) -> tuple[dict[str, pd.DataFram
     last = max(v.index.max() for v in parts["exists"])
     days = cal[(cal >= first) & (cal <= last)]
     cols_all = sorted(set().union(*[set(v.columns) for v in parts["exists"]]))
-    wide = {c: pd.concat(v).reindex(index=days, columns=cols_all).astype("float64") for c, v in parts.items()}
+    wide = {}
+    for c in list(parts):
+        wide[c] = pd.concat(parts.pop(c)).reindex(index=days, columns=cols_all).astype("float32")
     return wide, pd.concat(sectors, ignore_index=True)
 
 
@@ -128,9 +131,14 @@ def half_spread(wide: dict) -> pd.DataFrame:
     return np.maximum(np.sqrt(m.clip(lower=0)) / 2, floor)
 
 
-def indicators(wide: dict, W: int, groups=("FOR", "INST")) -> dict[str, pd.DataFrame]:
+def indicators(wide: dict, W: int, groups=("FOR", "INST"), rows=None) -> dict[str, pd.DataFrame]:
     """6절 지표와 필터 재료. 모든 값은 t일까지의 행만 쓰는 뒤쪽 창(rolling)으로 계산한다.
-    거래정지일의 순매수·수익률은 NaN 이라 합산에서 빠진다(4.3절)."""
+    거래정지일의 순매수·수익률은 NaN 이라 합산에서 빠진다(4.3절). rows(신호일 목록)를 주면 그 날짜 행만 남긴다."""
+    out = _indicators(wide, W, groups)
+    return out if rows is None else {k: v.loc[rows] for k, v in out.items()}
+
+
+def _indicators(wide: dict, W: int, groups) -> dict[str, pd.DataFrame]:
     ex, halted = wide["exists"], wide["halted"]
     traded = ((ex == 1) & (halted == 0)).astype(float).where(ex.notna())
     out = {"N": traded.rolling(W, min_periods=W).sum()}
@@ -183,15 +191,20 @@ def cross_sections(wide: dict, ind: dict, master: pd.DataFrame, sectors: pd.Data
     days = wide["exists"].index
     cal = calendar().index
     lpos = list_pos(master, cal).reindex(wide["exists"].columns)
-    hs = half_spread(wide)
+    # 신호일 행만 남긴 파생 값 (전체 행렬을 오래 들고 있지 않도록)
+    hs = half_spread(wide).loc[sigs]
     ac = wide["adj_close"].ffill()
-    turn_val = wide["value"].rolling(W_MAIN, min_periods=1).mean()
+    mom = (ac.shift(21) / ac.shift(252) - 1).loc[sigs]
+    rev = (ac / ac.shift(20) - 1).loc[sigs]
+    del ac
+    turn = (wide["value"].rolling(W_MAIN, min_periods=1).mean() / wide["mktcap"]).loc[sigs]
     sec = sectors.set_index(["date", "code"])["sector"]
     scores, bench, counts = [], [], []
     for t in sigs:
         j = days.get_loc(t)
-        at = lambda f: f.iloc[j]  # noqa: E731  (t일 행만 읽는다)
+        at = lambda f: f.loc[t]  # noqa: E731  (t일 행만 읽는다)
         cnt = {"date": t}
+        sec_t = sec.xs(t, level="date") if t in sec.index.get_level_values("date") else pd.Series(dtype=object)
         ok = at(wide["exists"]) == 1
         cnt["상장·정적조건"] = int(ok.sum())
         ok &= (at(wide["halted"]) == 0) & (at(wide["in_liq"]) == 0)
@@ -206,8 +219,7 @@ def cross_sections(wide: dict, ind: dict, master: pd.DataFrame, sectors: pd.Data
 
         base = pd.DataFrame({
             "CAR": at(ind["CAR"]), "mktcap": at(wide["mktcap"]), "kosdaq": at(wide["kosdaq"]),
-            "MOM": at(ac.shift(21)) / at(ac.shift(252)) - 1, "REV": at(ac) / at(ac.shift(20)) - 1,
-            "TURN": at(turn_val) / at(wide["mktcap"]), "hs": at(hs)})
+            "MOM": at(mom), "REV": at(rev), "TURN": at(turn), "hs": at(hs)})
         base["SIZE"] = np.log(base["mktcap"])
         for g in groups:
             src = g.removesuffix("_NOSC")  # FOR_NOSC = 숏커버링 필터만 뺀 FOR (8.5절 보조 분석)
@@ -231,7 +243,7 @@ def cross_sections(wide: dict, ind: dict, master: pd.DataFrame, sectors: pd.Data
             d["Stilde"] = -(s - np.polyval(b, c))
             d["score"] = rank_z(d["C"]) + rank_z(d["P"]) + rank_z(d["Stilde"]) - rank_z(d["CAR"])
             d["group"], d["date"], d["j"] = g, t, j
-            d["sector"] = [sec.get((t, code)) for code in d.index]
+            d["sector"] = d.index.map(sec_t)
             scores.append(d.rename_axis("code").reset_index())
         counts.append(cnt)
     return (pd.concat(scores, ignore_index=True), pd.concat(bench, ignore_index=True), pd.DataFrame(counts))
@@ -246,9 +258,9 @@ class Engine:
         self.days = wide["exists"].index
         self.codes = wide["exists"].columns
         self.col = pd.Series(np.arange(len(self.codes)), index=self.codes)
-        self.ret = wide["ret"].to_numpy()
-        self.aopen = wide["adj_open"].to_numpy()
-        self.aclose = wide["adj_close"].to_numpy()
+        self.ret = wide["ret"].to_numpy(dtype="float64")
+        self.aopen = wide["adj_open"].to_numpy(dtype="float64")
+        self.aclose = wide["adj_close"].to_numpy(dtype="float64")
         self.hold = hold
         cal = calendar().index
         tax = pd.read_csv(CLEAN / "ref" / "tax_rates.csv", parse_dates=["settle_from", "settle_to"])
